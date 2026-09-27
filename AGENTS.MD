@@ -19,3 +19,5 @@ Project Goals:
 9. the original Candle github repository: "https://github.com/CakeML/candle.git"
 
 10. use Kani to prevent mistakes from happening from the first time, prevent repeating a mistake that has been made, and as a means of human supervision.
+
+Target Project Repository: [https://github.com/QuasarRay/Candle-rs.git](https://github.com/QuasarRay/Candle-rs.git)
