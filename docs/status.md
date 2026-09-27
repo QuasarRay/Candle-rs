@@ -3,6 +3,30 @@
 This file describes scope. Actual run results live in per-run evidence artifacts;
 they must be associated with the exact checked commit/source digest.
 
+The [2026-09-27 baseline](../verification/baseline-2026-09-27.json) records clean
+commit `65ef925d106168f7d974e3ad4e4bfd5e5c3bb7c8`. Twelve Rust tests and fourteen
+supervision tests pass, as do formatting, Clippy and both verifier qualification
+controls. The full verification result is **failed**: three Kani harnesses pass
+and three time out after 90 seconds. Complete exports and logs, including failures,
+are retained in the [evidence archive](../verification/baseline-2026-09-27.tar.gz).
+The archive's SHA-256 is in the JSON record. These are historical results for the
+named commit, not automatic evidence for subsequent changes.
+
+| Obligation | Harness | Baseline result |
+| --- | --- | --- |
+| TYPE-001 | `variable_roundtrip` | Pass under registered bounds |
+| STATE-001 | `signature_sequence_is_transactional` | Failed: timeout |
+| STATE-002 | `builtin_redeclaration_preserves_state` | Pass under registered bounds |
+| TYPE-002 | `constructor_accepts_exact_arity` | Failed: timeout |
+| SUBST-001 | `substitution_uses_first_match_once` | Pass under registered bounds |
+| SUBST-002 | `substitution_traverses_children_and_ignores_application_targets` | Failed: timeout |
+
+Before broadening the implementation, resolve these proof costs through
+reviewable proof decomposition or representation changes while preserving the
+registered domains and independent oracles. Do not make the gate green by
+removing harnesses, reducing inputs, introducing unchecked stubs or disabling
+unwinding assertions. A timeout is neither a counterexample nor a successful proof.
+
 | Component | Implementation | Evidence / remaining gap |
 | --- | --- | --- |
 | Repository-wide goals | Canonical AGENTS.md with identical directory copies | Drift check and negative controls |

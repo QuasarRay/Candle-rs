@@ -9,6 +9,10 @@ substitution. Kani checks the explicit finite domains in
 [`spec/obligations.json`](spec/obligations.json). Unbounded semantic equivalence,
 theorem soundness, and final-binary verification have not been established.
 
+The [recorded baseline](docs/status.md) has 12 passing Rust tests, 14 passing
+supervision tests and 3 of 6 passing bounded Kani harnesses. Three harnesses time
+out; the overall verification gate remains failed and the PR stack stays draft.
+
 ## Run and inspect
 
 With Rustup and Python 3 available (including on CachyOS):
