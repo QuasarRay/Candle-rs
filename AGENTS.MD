@@ -8,7 +8,7 @@ Project Goals:
 
 4. Initially sacrifice performance optimization and code readability and idiomaticness in favor of reliability, faster development cycles, and preventing wasted credits/tokens
 
-5. prefer code reuse over implementing from scratch.
+5. prefer code reuse over implementing from scratch. Reuse Boilerplate from the source codes of Verus and Kani to prevent tokens/credits from being wasted, and to accelerate development cycles.
 
 6. prefer machine generated code over direct implementation.
 
@@ -16,8 +16,10 @@ Project Goals:
 
 8. this AGENTS.md file should exist at every directory in the project repository.
 
-9. the original Candle github repository: "https://github.com/CakeML/candle.git"
+9. Reuse mathematical specifications from Original Candle, while Rust implements those specifications. Also allow the scientific paper of Candle to guide you in the process of developing the Rust implementation. Treat the Original Candle's mathematical specifications as shared contract between Original Candle and Candle-rs. Both projects should understand the exact same specification files exactly in the same way and the same manner. therefore, the specifications share syntax as well as semantics.
 
-10. use Kani to prevent mistakes from happening from the first time, prevent repeating a mistake that has been made, and as a means of human supervision.
+10. use Kani to prevent mistakes from happening from the first time, prevent repeating a mistake that has been made, and as a means of human supervision. Also prevent progress from being lost by making stackable pull requests incrementally. Turn my github account into your workspace.
 
-Target Project Repository: [https://github.com/QuasarRay/Candle-rs.git](https://github.com/QuasarRay/Candle-rs.git)
+The Original Candle Github Repository: "https://github.com/CakeML/candle.git"
+
+Target Project Repository: "https://github.com/QuasarRay/Candle-rs.git"
