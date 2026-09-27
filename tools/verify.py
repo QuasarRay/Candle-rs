@@ -12,6 +12,48 @@ import time
 from repo import ROOT, source_digest
 
 
+def validate_kani_report(report, manifest):
+    """Fail closed on incomplete execution, even if a tool exits successfully."""
+    errors, harnesses = [], []
+    expected = {f"proofs::{item['harness']}" for item in manifest["bounded_properties"]}
+    if not expected:
+        errors.append("No registered harnesses")
+    try:
+        if report["metadata"]["kani_version"] != manifest["kani_version"]:
+            errors.append("Exported Kani version mismatch")
+        results = report["verification_results"]["results"]
+        identifiers = [item["harness_id"] for item in results]
+        if len(identifiers) != len(set(identifiers)) or set(identifiers) != expected:
+            errors.append("Executed harness inventory differs from the manifest")
+        metadata = report["harness_metadata"]
+        names = [item["pretty_name"] for item in metadata]
+        if len(names) != len(set(names)) or set(names) != expected:
+            errors.append("Harness metadata inventory differs from the manifest")
+        for item in metadata:
+            if item["attributes"]["kind"] != "Proof" or item["attributes"]["should_panic"]:
+                errors.append(f"Unexpected proof attributes: {item['pretty_name']}")
+        summary = report["verification_results"]["summary"]
+        for key, value in {"total_harnesses": len(expected), "executed": len(expected),
+                           "status": "completed", "successful": len(expected), "failed": 0}.items():
+            if summary[key] != value:
+                errors.append(f"Unexpected verification summary {key}: {summary[key]}")
+        for item in results:
+            checks = item["checks"]
+            assertions = [check for check in checks if check["category"] == "assertion"
+                          and check["function"] == item["harness_id"]
+                          and check["status"] == "Success"]
+            harnesses.append({"harness": item["harness_id"], "status": item["status"],
+                              "duration_ms": item["duration_ms"],
+                              "successful_harness_assertions": len(assertions)})
+            if item["status"] != "Success" or not assertions:
+                errors.append(f"No successful proof with reachable assertions: {item['harness_id']}")
+            if any(check["status"] not in ("Success", "Unreachable") for check in checks):
+                errors.append(f"Unresolved or failed check: {item['harness_id']}")
+    except (KeyError, TypeError, ValueError) as error:
+        errors.append(f"Malformed or unsupported Kani report: {error}")
+    return {"passed": not errors, "errors": errors, "harnesses": harnesses}
+
+
 def capture(command):
     try:
         result = subprocess.run(command, cwd=ROOT, text=True, stdout=subprocess.PIPE,
@@ -56,16 +98,21 @@ def main():
             ("clippy", ["cargo", "clippy", "--locked", "--all-targets", "--", "-D", "warnings"]),
         ])
     version_ok = True
+    kani_report = directory / "kani-results.json"
     if args.lane in ("kani", "full"):
         code, output = capture(["cargo", "kani", "--version"])
         result["tools"]["kani"] = {"exit_code": code, "version": output.strip()}
-        version = json.loads((ROOT / "spec/obligations.json").read_text())["kani_version"]
-        version_ok = code == 0 and output.splitlines()[0].startswith(f"Kani Rust Verifier {version} ")
+        manifest = json.loads((ROOT / "spec/obligations.json").read_text())
+        version = manifest["kani_version"]
+        version_ok = code == 0 and output.startswith(f"Kani Rust Verifier {version} ")
+        # A failed invocation must never inherit a previous run's successful export.
+        kani_report.unlink(missing_ok=True)
         if version_ok:
             checks.append(("kani-qualification", [sys.executable, "tools/qualify.py", "kani"]))
             checks.append(("kani", ["cargo", "kani", "--output-format", "terse",
-                                    "-Z", "unstable-options", "--export-json",
-                                    str(directory / "kani-results.json")]))
+                                    "-Z", "unstable-options", "--harness-timeout",
+                                    f"{manifest['harness_timeout_seconds']}s", "--export-json",
+                                    str(kani_report)]))
         else:
             result["checks"].append({"name": "kani-version", "exit_code": 1,
                                      "error": f"Required Kani {version} is missing or mismatched"})
@@ -80,6 +127,15 @@ def main():
         print(f"{name}: {'PASS' if code == 0 else 'FAIL'}", flush=True)
         if code:
             print(output[-4000:], flush=True)
+        if name == "kani":
+            try:
+                inventory = validate_kani_report(json.loads(kani_report.read_text()), manifest)
+            except (OSError, ValueError) as error:
+                inventory = {"passed": False, "errors": [f"No usable Kani export: {error}"],
+                             "harnesses": []}
+            result["kani_inventory"] = inventory
+            result["checks"].append({"name": "kani-inventory", "exit_code": 0 if inventory["passed"] else 1})
+            print(f"kani-inventory: {'PASS' if inventory['passed'] else 'FAIL'}", flush=True)
     result["finished_utc"] = datetime.now(timezone.utc).isoformat()
     result["source_unchanged"] = start_digest == source_digest()
     result["passed"] = version_ok and result["source_unchanged"] and all(c["exit_code"] == 0 for c in result["checks"])

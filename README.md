@@ -36,6 +36,11 @@ full run. For explicitly partial checks use `--lane rust`, `--lane kani` or
 the verifier installation using reused upstream controls, not Candle functions.
 CI runs all three lanes and publishes their evidence.
 
+Each Kani harness currently has a 90-second solver budget recorded in the proof
+manifest. Timeouts stay failed. The collector checks that every registered
+harness appears exactly once in the exported results; a successful subset cannot
+make the full lane pass.
+
 Change the example's substitution or duplicate declaration to observe the result.
 Names print as bytes intentionally: ML strings may contain NUL and invalid UTF-8.
 

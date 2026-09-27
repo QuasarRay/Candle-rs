@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 from repo import ROOT, remove_comments, tracked_and_new_files
+from verify import validate_kani_report
 
 
 class SupervisionTests(unittest.TestCase):
@@ -72,6 +73,46 @@ class SupervisionTests(unittest.TestCase):
 
     def test_nested_comments_are_not_definitions(self):
         self.assertEqual(remove_comments("a(* x (* nested *) y *)b"), "a b")
+
+
+class EvidenceTests(unittest.TestCase):
+    def setUp(self):
+        self.manifest = {"kani_version": "0.68.0", "bounded_properties": [{"harness": "example"}]}
+        self.report = {
+            "metadata": {"kani_version": "0.68.0"},
+            "harness_metadata": [{"pretty_name": "proofs::example",
+                                  "attributes": {"kind": "Proof", "should_panic": False}}],
+            "verification_results": {
+                "summary": {"total_harnesses": 1, "executed": 1, "status": "completed",
+                            "successful": 1, "failed": 0},
+                "results": [{"harness_id": "proofs::example", "status": "Success", "duration_ms": 1,
+                             "checks": [{"category": "assertion", "function": "proofs::example",
+                                         "status": "Success"}]}],
+            },
+        }
+
+    def test_complete_evidence_passes(self):
+        self.assertTrue(validate_kani_report(self.report, self.manifest)["passed"])
+
+    def test_successful_subset_does_not_certify_manifest(self):
+        self.manifest["bounded_properties"].append({"harness": "omitted"})
+        self.assertFalse(validate_kani_report(self.report, self.manifest)["passed"])
+
+    def test_duplicate_result_does_not_count_twice(self):
+        self.report["verification_results"]["results"] *= 2
+        self.assertFalse(validate_kani_report(self.report, self.manifest)["passed"])
+
+    def test_unreachable_assertions_do_not_count_as_proof(self):
+        self.report["verification_results"]["results"][0]["checks"][0]["status"] = "Unreachable"
+        self.assertFalse(validate_kani_report(self.report, self.manifest)["passed"])
+
+    def test_failed_check_overrides_success_label(self):
+        self.report["verification_results"]["results"][0]["checks"].append(
+            {"category": "unwinding_assertion", "function": "proofs::example", "status": "Failure"})
+        self.assertFalse(validate_kani_report(self.report, self.manifest)["passed"])
+
+    def test_missing_export_fields_fail_closed(self):
+        self.assertFalse(validate_kani_report({}, self.manifest)["passed"])
 
 
 if __name__ == "__main__":

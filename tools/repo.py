@@ -137,6 +137,11 @@ def sync_agents(check=False):
 
 def check_obligations():
     manifest = json.loads((ROOT / "spec/obligations.json").read_text())
+    budget = manifest["harness_timeout_seconds"]
+    if type(budget) is not int or budget <= 0:
+        raise ValueError("Kani harness timeout must be a positive number of seconds")
+    if not manifest["bounded_properties"]:
+        raise ValueError("Kani harness inventory must not be empty")
     source = (ROOT / "src/proofs.rs").read_text()
     actual = re.findall(r"#\[kani::proof\]\s*#\[kani::unwind\((\d+)\)\]\s*fn (\w+)", source)
     expected = [(str(item["unwind"]), item["harness"]) for item in manifest["bounded_properties"]]

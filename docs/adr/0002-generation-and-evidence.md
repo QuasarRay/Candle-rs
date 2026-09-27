@@ -25,8 +25,21 @@ third-party Python dependencies or Rust runtime interop.
 
 Maintain handwritten expected values and symbolic properties separately from
 the generator. Pin Kani and stable Rust. Never disable unwinding assertions or
-replace resource/unsupported-feature failures with a pass. Use two CI lanes and
+replace resource/unsupported-feature failures with a pass. Use three CI lanes and
 always retain their logs and source digest as artifacts, including failures.
+
+Bound each Kani harness run to the wall-clock budget in `spec/obligations.json`
+(initially 90 seconds). A timeout remains a failed obligation. Keep input domains,
+symbolic values and unwinding assertions unchanged when controlling execution
+cost. Raising this budget requires a reviewable manifest change.
+
+Clear old exports before running Kani. Validate the actual exported harness IDs
+against the manifest, reject duplicates, require successful results and at least
+one successful assertion in each harness, and reject failed/unresolved checks.
+Exit status alone cannot establish that all registered work was performed.
+Negative controls cover omitted results, duplicate results, unreachable-only
+assertions and contradictory success labels. These are collector tests, not a
+proof that every semantic assertion is nonvacuous or that Kani is sound.
 
 ## Alternatives
 
@@ -46,7 +59,7 @@ reduce accidental drift; they are not a sandbox against malicious agents who can
 also edit the controls. Human comparison with upstream remains necessary.
 
 Reports identify the preexisting commit and exact full source digest, including
-dirty files. For a reviewed release use a clean checkout and require both CI
+dirty files. For a reviewed release use a clean checkout and require all CI
 lanes to pass for that revision. A local dirty-tree report is valid only for its
 recorded digest, not automatically for the old commit named in the report.
 
