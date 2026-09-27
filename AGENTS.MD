@@ -17,3 +17,5 @@ Project Goals:
 8. this AGENTS.md file should exist at every directory in the project repository.
 
 9. the original Candle github repository: "https://github.com/CakeML/candle.git"
+
+10. use Kani to prevent mistakes from happening from the first time, prevent repeating a mistake that has been made, and as a means of human supervision.
