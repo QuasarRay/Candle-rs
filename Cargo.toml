@@ -1,0 +1,19 @@
+[package]
+name = "candle-kernel"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.98"
+publish = false
+license-file = "LICENSE.MD"
+description = "Specification-linked Rust foundation for the Candle theorem prover"
+repository = "https://github.com/QuasarRay/Candle-rs"
+
+[lints.rust]
+unsafe_code = "forbid"
+unexpected_cfgs = { level = "deny", check-cfg = ['cfg(kani)'] }
+
+[lints.clippy]
+all = "deny"
+
+[profile.release]
+overflow-checks = true

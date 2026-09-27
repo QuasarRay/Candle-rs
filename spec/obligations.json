@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "kani_version": "0.68.0",
+  "bounded_properties": [
+    {
+      "id": "TYPE-001",
+      "harness": "variable_roundtrip",
+      "unwind": 8,
+      "domain": "Every two-byte ML name; raw variable constructor, predicates and destructors",
+      "upstream": [
+        "mk_vartype_def",
+        "is_type_def",
+        "is_vartype_def",
+        "dest_type_def",
+        "dest_vartype_def"
+      ]
+    },
+    {
+      "id": "STATE-001",
+      "harness": "signature_sequence_is_transactional",
+      "unwind": 8,
+      "domain": "Three declarations; all one-byte names and all usize arities; initial bool/fun signature. Duplicate names unrestricted.",
+      "upstream": [
+        "add_type_def",
+        "get_type_arity_def",
+        "types_def"
+      ]
+    },
+    {
+      "id": "STATE-002",
+      "harness": "builtin_redeclaration_preserves_state",
+      "unwind": 8,
+      "domain": "Either builtin name and every usize arity",
+      "upstream": [
+        "add_type_def"
+      ]
+    },
+    {
+      "id": "TYPE-002",
+      "harness": "constructor_accepts_exact_arity",
+      "unwind": 4,
+      "domain": "One declared one-byte name; every usize arity; zero or one one-byte variable argument; a missing constructor",
+      "upstream": [
+        "mk_type_def",
+        "dest_type_def",
+        "dest_vartype_def",
+        "is_type_def",
+        "is_vartype_def"
+      ]
+    },
+    {
+      "id": "SUBST-001",
+      "harness": "substitution_uses_first_match_once",
+      "unwind": 3,
+      "domain": "Two substitution pairs of one-byte variables, including duplicate keys and chains; arbitrary one-byte query",
+      "upstream": [
+        "type_subst_def",
+        "rev_assocd_def"
+      ]
+    },
+    {
+      "id": "SUBST-002",
+      "harness": "substitution_traverses_children_and_ignores_application_targets",
+      "unwind": 4,
+      "domain": "One fun node with two arbitrary one-byte variables; bool replacement; non-variable target; empty substitution identity",
+      "upstream": [
+        "type_subst_def"
+      ]
+    }
+  ],
+  "open_obligations": [
+    {
+      "id": "REFINE-001",
+      "claim": "Unbounded Rust type substitution refines HOL TYPE_SUBST for all finite types and substitution lists",
+      "status": "unproved"
+    },
+    {
+      "id": "REFINE-002",
+      "claim": "Unbounded type-signature state simulation including full HOL theory context updates",
+      "status": "unproved and full context unimplemented"
+    },
+    {
+      "id": "DOMAIN-001",
+      "claim": "All HOL natural arities supported",
+      "status": "unsupported above usize::MAX"
+    },
+    {
+      "id": "RESOURCE-001",
+      "claim": "Total resource-safe execution and destruction for arbitrary-depth input",
+      "status": "unproved; allocation failure and recursion/derived clone/drop depth remain outside current claim"
+    },
+    {
+      "id": "SYSTEM-001",
+      "claim": "Full Candle interface and behavior equivalence",
+      "status": "unimplemented beyond first type slice"
+    },
+    {
+      "id": "BINARY-001",
+      "claim": "Final machine code inherits original Candle end-to-end soundness",
+      "status": "not established; rustc/LLVM and runtime remain trusted"
+    }
+  ]
+}
