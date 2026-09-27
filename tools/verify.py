@@ -3,6 +3,7 @@
 import argparse
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -22,7 +23,7 @@ def capture(command):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--lane", choices=["rust", "kani", "full"], default="full")
+    parser.add_argument("--lane", choices=["rust", "kani", "verus", "full"], default="full")
     args = parser.parse_args()
     directory = ROOT / "evidence" / args.lane
     directory.mkdir(parents=True, exist_ok=True)
@@ -43,6 +44,10 @@ def main():
         code, output = capture(command)
         result["tools"][tool] = {"exit_code": code, "version": output.strip()}
     checks = [("repository", [sys.executable, "tools/repo.py", "check"])]
+    if args.lane in ("verus", "full"):
+        code, output = capture([os.environ.get("CANDLE_VERUS", "verus"), "--version"])
+        result["tools"]["verus"] = {"exit_code": code, "version": output.strip()}
+        checks.append(("verus-qualification", [sys.executable, "tools/qualify.py", "verus"]))
     if args.lane in ("rust", "full"):
         checks.extend([
             ("supervision", [sys.executable, "tools/test_repo.py"]),
@@ -57,6 +62,7 @@ def main():
         version = json.loads((ROOT / "spec/obligations.json").read_text())["kani_version"]
         version_ok = code == 0 and output.splitlines()[0].startswith(f"Kani Rust Verifier {version} ")
         if version_ok:
+            checks.append(("kani-qualification", [sys.executable, "tools/qualify.py", "kani"]))
             checks.append(("kani", ["cargo", "kani", "--output-format", "terse",
                                     "-Z", "unstable-options", "--export-json",
                                     str(directory / "kani-results.json")]))

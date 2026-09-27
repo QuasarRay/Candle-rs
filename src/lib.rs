@@ -118,12 +118,9 @@ impl HolType {
             Self::Tyvar(name) => {
                 for (replacement, target) in substitutions {
                     if matches!(target, Self::Tyvar(other) if other == name) {
-                        return match replacement {
-                            Self::Tyvar(other) => Self::Tyvar(other.clone()),
-                            Self::Tyapp(constructor, args) => {
-                                Self::Tyapp(constructor.clone(), args.clone())
-                            }
-                        };
+                        // Copy structurally through the same traversal with no
+                        // substitutions. Never rewrite an inserted replacement.
+                        return replacement.type_subst(&[]);
                     }
                 }
                 Self::Tyvar(name.clone())

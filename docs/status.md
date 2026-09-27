@@ -9,6 +9,8 @@ they must be associated with the exact checked commit/source digest.
 | Architecture description | Stakeholders, concerns, viewpoints, views, correspondences and ADRs | Uses ISO 42010 concepts; no conformance/certification claim |
 | Upstream identification | Two pinned repositories; four byte-checked CakeML files including license | Does not attest an upstream executable build |
 | Metaprogramming | HOL datatype/table extraction; definition inventory; derive-based structural operations; instruction replication | Generator unverified; unsupported syntax fails closed |
+| Shared contract | Byte-identical original HOL files, identity-check/replay driver, paper-guided ADR | HOL4 replay and Rust refinement bridge remain open |
+| Kani/Verus source reuse | Pinned upstream examples, libraries/macros and positive/negative installation controls | Tool qualification only; not Candle semantic proofs |
 | HOL type operations | Ten mapped definitions; initial bool/fun signature; byte-preserving failures | Twelve concrete tests and six bounded Kani properties |
 | Full theory context / new_type | Not implemented | `add_type` only is provided; no context correspondence claim |
 | Terms, substitution with capture avoidance, alpha-equivalence | Not implemented | Type substitution is not term substitution |

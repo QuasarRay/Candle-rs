@@ -27,8 +27,8 @@ def source_directories():
     return sorted(result)
 
 
-def check_upstream():
-    lock = json.loads((ROOT / "spec/upstream.lock.json").read_text())
+def check_locked_files(manifest):
+    lock = json.loads((ROOT / manifest).read_text())
     for entry in lock["files"]:
         data = (ROOT / entry["local"]).read_bytes()
         blob = b"blob " + str(len(data)).encode() + b"\0" + data
@@ -37,6 +37,10 @@ def check_upstream():
         if hashlib.sha1(blob).hexdigest() != entry["git_blob"]:
             raise ValueError(f"Upstream Git blob mismatch: {entry['local']}")
     return lock
+
+
+def check_upstream():
+    return check_locked_files("spec/upstream.lock.json")
 
 
 def remove_comments(text):
@@ -149,6 +153,7 @@ def check_obligations():
 
 
 def check():
+    check_locked_files("verification/reuse.lock.json")
     expected = generated_files()
     for path, content in expected.items():
         if not (ROOT / path).exists() or (ROOT / path).read_text() != content:

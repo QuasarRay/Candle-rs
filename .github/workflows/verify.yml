@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        lane: [rust, kani]
+        lane: [rust, kani, verus]
     steps:
       - name: Check out reviewed revision
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -33,6 +33,9 @@ jobs:
         run: |
           cargo install --locked kani-verifier --version 0.68.0
           cargo kani setup
+      - name: Install pinned Verus
+        if: matrix.lane == 'verus'
+        run: bash tools/install_verus.sh
       - name: Run checks and collect evidence
         run: python3 tools/verify.py --lane ${{ matrix.lane }}
       - name: Retain evidence even on failure
@@ -40,5 +43,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: candle-${{ matrix.lane }}-${{ github.sha }}
-          path: evidence/${{ matrix.lane }}/
+          path: |
+            evidence/${{ matrix.lane }}/
+            evidence/qualification/${{ matrix.lane }}/
           if-no-files-found: warn

@@ -113,5 +113,6 @@ traverses application arguments in order; non-variable targets have no effect.
 
 [ADR-0001](adr/0001-specification-and-scope.md) chooses the specification boundary.
 [ADR-0002](adr/0002-generation-and-evidence.md) chooses generation and evidence
-mechanisms. Proposed changes to trust, representation, accepted domains or proof
+mechanisms. [ADR-0003](adr/0003-shared-hol-contract-and-reuse.md) fixes the shared
+HOL contract and verifier-source reuse boundary. Proposed changes to trust, representation, accepted domains or proof
 claims require an ADR update with new evidence and unresolved consequences.

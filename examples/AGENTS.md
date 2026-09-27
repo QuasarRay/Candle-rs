@@ -31,6 +31,11 @@ Target Project Repository: "https://github.com/QuasarRay/Candle-rs.git"
   upstream definition and an explicit acceptance property.
 - Pin upstream revisions in `spec/upstream.lock.json`. Reuse upstream definitions,
   generated artefacts and proven abstractions where applicable. Retain notices.
+- Read `docs/shared-contract.md`: original HOL4 files are the shared contract.
+  Do not silently replace them with an independently defined Rust/Verus model.
+  Qualification controls in `verification/reuse/` establish tool behavior only.
+- Preserve work in stacked draft PRs as each reviewable layer is ready. Do not
+  merge, force-push unrelated branches, or claim failed verification has passed.
 - Use safe Rust. Keep the initial kernel single threaded and deterministic.
   Prefer explicit state and failure values. Do not expose a way to forge theorems.
 - Reliability and independently checkable evidence outrank speed, terseness,

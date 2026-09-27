@@ -20,7 +20,8 @@ cargo run --locked --example types
 cargo test --locked --all-targets
 cargo install --locked kani-verifier --version 0.68.0
 cargo kani setup
-python3 tools/verify.py
+bash tools/install_verus.sh
+env CANDLE_VERUS=/tmp/candle-verus-0.2026.09.20.aef82ed/verus-x86-linux/verus python3 tools/verify.py
 ```
 
 Rustup selects the version in `rust-toolchain.toml`. Kani uses its own pinned
@@ -30,13 +31,20 @@ automation; the Rust library does not load or call Python.
 
 `tools/verify.py` saves commands, versions, logs, commit identity, dirty-tree status,
 source digest, and results under `evidence/full/`. A missing verifier fails the
-full run. For explicitly partial checks use `--lane rust` or `--lane kani`; each
-report identifies its lane. CI runs both lanes and publishes their evidence.
+full run. For explicitly partial checks use `--lane rust`, `--lane kani` or
+`--lane verus`; each report identifies its lane. The Verus lane currently checks
+the verifier installation using reused upstream controls, not Candle functions.
+CI runs all three lanes and publishes their evidence.
 
 Change the example's substitution or duplicate declaration to observe the result.
 Names print as bytes intentionally: ML strings may contain NUL and invalid UTF-8.
 
 ## Supervise before extending
+
+The [shared contract policy](docs/shared-contract.md) keeps the original HOL4
+specification files authoritative for both implementations. A checked bridge from
+Rust semantics to those definitions remains open; Kani properties and Verus
+qualification examples do not replace that contract.
 
 1. Read [`docs/architecture.md`](docs/architecture.md) for trust boundaries and
    stakeholder concerns, then [`docs/status.md`](docs/status.md) for remaining work.
