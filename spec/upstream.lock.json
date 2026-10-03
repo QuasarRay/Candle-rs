@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "repositories": {
+    "candle": {
+      "url": "https://github.com/CakeML/candle.git",
+      "commit": "5b1888b9a0c1da7ca0ef2e80526b726f2e27df9d",
+      "role": "User-facing interface and scripts"
+    },
+    "cakeml": {
+      "url": "https://github.com/CakeML/cakeml.git",
+      "commit": "bef5e6194c41e356441399d4344b965794dc0d1b",
+      "role": "Monadic kernel definitions, inference system, translator and soundness proofs"
+    }
+  },
+  "files": [
+    {
+      "repository": "cakeml",
+      "path": "candle/standard/monadic/holKernelScript.sml",
+      "local": "spec/upstream/holKernelScript.sml",
+      "git_blob": "c3df6bdb2dd0be3cbaa6073702764237999f0802",
+      "sha256": "2e3c3966d93b910b9ecfaeffa77de1189735a91493eda5175abf40ee5f97e878"
+    },
+    {
+      "repository": "cakeml",
+      "path": "candle/standard/syntax/holSyntaxScript.sml",
+      "local": "spec/upstream/holSyntaxScript.sml",
+      "git_blob": "3f59b52b8c79263a9062b6ced41838a77b84f2ff",
+      "sha256": "8c00adc7d30e141308fdde768bc9ce3b4d4058d7250b046447e1b135878adc47"
+    },
+    {
+      "repository": "cakeml",
+      "path": "candle/standard/ml_kernel/ml_hol_kernel_funsProgScript.sml",
+      "local": "spec/upstream/ml_hol_kernel_funsProgScript.sml",
+      "git_blob": "33bc9848350998bdfd00e48c4a07a7a6475594ae",
+      "sha256": "7f97e7201b6b25ba85739bc125c1346ce9099ae97c6f30c18ecf69b545a97e11"
+    },
+    {
+      "repository": "cakeml",
+      "path": "LICENSE",
+      "local": "spec/upstream/LICENSE.CakeML",
+      "git_blob": "80e37de761be6a04c9edb52e317ef5ba23ee02a5",
+      "sha256": "563807b6d147728614cb470a86568f60e0ba1a5582b3ae8c9758e470e89066fb"
+    }
+  ]
+}

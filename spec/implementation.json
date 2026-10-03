@@ -1,0 +1,12 @@
+{
+  "types_def": {"rust": "TypeSignature::types", "status": "Type-state projection"},
+  "get_type_arity_def": {"rust": "TypeSignature::get_type_arity", "status": "Type-state projection"},
+  "add_type_def": {"rust": "TypeSignature::add_type", "status": "Type-state projection"},
+  "mk_type_def": {"rust": "TypeSignature::mk_type", "status": "Raw HOL syntax domain"},
+  "mk_vartype_def": {"rust": "HolType::mk_vartype", "status": "Implemented"},
+  "dest_type_def": {"rust": "HolType::dest_type", "status": "Implemented"},
+  "dest_vartype_def": {"rust": "HolType::dest_vartype", "status": "Implemented"},
+  "is_type_def": {"rust": "HolType::is_type", "status": "Implemented"},
+  "is_vartype_def": {"rust": "HolType::is_vartype", "status": "Implemented"},
+  "type_subst_def": {"rust": "HolType::type_subst", "status": "Bounded properties only; unbounded refinement open"}
+}

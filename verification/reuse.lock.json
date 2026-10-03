@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "repositories": {
+    "kani": {
+      "url": "https://github.com/model-checking/kani.git",
+      "commit": "0d2328a93f0e0ff66132d6bfa1a7d884877cf862"
+    },
+    "verus": {
+      "url": "https://github.com/verus-lang/verus.git",
+      "commit": "aef82eda71838deef4a8cd0260fda6c9504be9b9"
+    }
+  },
+  "files": [
+    {
+      "repository": "kani",
+      "path": "tests/kani/Arbitrary/arbitrary_impls.rs",
+      "local": "verification/reuse/kani_arbitrary.rs",
+      "git_blob": "4225b0501495d00a076839fd6b4f6e4f648b7b12",
+      "sha256": "d25d98f6d1cfe3b477fd2b392c45261476f4f434c503da2e81e57c07a6b5214d"
+    },
+    {
+      "repository": "verus",
+      "path": "examples/guide/getting_started.rs",
+      "local": "verification/reuse/verus_getting_started.rs",
+      "git_blob": "b3634b242e291069597a7633b0b3a6e9c42474d2",
+      "sha256": "9085e7775c3b52823d3951c9702be796149d07e34fb306054a612526542ca8bf"
+    },
+    {
+      "repository": "verus",
+      "path": "LICENSE",
+      "local": "verification/reuse/LICENSE.Verus",
+      "git_blob": "735146c38c8970ebe5cecf9964bc10095f5197e1",
+      "sha256": "ab78fc657425500bc64f617e36bb6819c6b0d039c573642f603dd594b12fe0d3"
+    },
+    {
+      "repository": "kani",
+      "path": "LICENSE-MIT",
+      "local": "verification/reuse/LICENSE.Kani",
+      "git_blob": "31aa79387f27e730e33d871925e152e35e428031",
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    }
+  ]
+}

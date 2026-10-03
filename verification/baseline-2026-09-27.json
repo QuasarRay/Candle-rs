@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "lane": "full",
+  "started_utc": "2026-09-27T09:59:23.071189+00:00",
+  "commit": "65ef925d106168f7d974e3ad4e4bfd5e5c3bb7c8",
+  "dirty": false,
+  "source_sha256": "b86bedc883f94e3a46518aa620f28d48c72b520871fb19c5bb9927c0fa90985d",
+  "checks": [
+    {
+      "name": "repository",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "tools/repo.py",
+        "check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.122,
+      "log": "repository.log"
+    },
+    {
+      "name": "verus-qualification",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "tools/qualify.py",
+        "verus"
+      ],
+      "exit_code": 0,
+      "seconds": 1.484,
+      "log": "verus-qualification.log"
+    },
+    {
+      "name": "supervision",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "tools/test_repo.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1.119,
+      "log": "supervision.log"
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.101,
+      "log": "format.log"
+    },
+    {
+      "name": "tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--all-targets"
+      ],
+      "exit_code": 0,
+      "seconds": 0.07,
+      "log": "tests.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.086,
+      "log": "clippy.log"
+    },
+    {
+      "name": "kani-qualification",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "tools/qualify.py",
+        "kani"
+      ],
+      "exit_code": 0,
+      "seconds": 0.627,
+      "log": "kani-qualification.log"
+    },
+    {
+      "name": "kani",
+      "command": [
+        "cargo",
+        "kani",
+        "--output-format",
+        "terse",
+        "-Z",
+        "unstable-options",
+        "--harness-timeout",
+        "90s",
+        "--export-json",
+        "/workspace/scratch/38a240092f2f/Candle-rs/evidence/full/kani-results.json"
+      ],
+      "exit_code": 1,
+      "seconds": 292.903,
+      "log": "kani.log"
+    },
+    {
+      "name": "kani-inventory",
+      "exit_code": 1
+    }
+  ],
+  "tools": {
+    "rustc": {
+      "exit_code": 0,
+      "version": "rustc 1.98.1 (48a229cea 2026-09-01)"
+    },
+    "cargo": {
+      "exit_code": 0,
+      "version": "cargo 1.98.1 (797e8a9bc 2026-08-05)"
+    },
+    "python": {
+      "exit_code": 0,
+      "version": "Python 3.12.14"
+    },
+    "git": {
+      "exit_code": 0,
+      "version": "git version 2.51.1"
+    },
+    "verus": {
+      "exit_code": 0,
+      "version": "Verus\n  Version: 0.2026.09.20.aef82ed\n  Profile: release\n  Platform: linux_x86_64\n  Toolchain: 1.98.1-x86_64-unknown-linux-gnu (overridden by environment variable RUSTUP_TOOLCHAIN)"
+    },
+    "kani": {
+      "exit_code": 0,
+      "version": "Kani Rust Verifier 0.68.0 (cargo plugin)\nCBMC 6.11.0"
+    }
+  },
+  "claim": "Check results for this source digest and registered bounds; not full Candle equivalence or binary soundness",
+  "kani_inventory": {
+    "passed": false,
+    "errors": [
+      "Unexpected verification summary successful: 3",
+      "Unexpected verification summary failed: 3",
+      "No successful proof with reachable assertions: proofs::substitution_traverses_children_and_ignores_application_targets",
+      "No successful proof with reachable assertions: proofs::constructor_accepts_exact_arity",
+      "No successful proof with reachable assertions: proofs::signature_sequence_is_transactional"
+    ],
+    "harnesses": [
+      {
+        "harness": "proofs::substitution_traverses_children_and_ignores_application_targets",
+        "status": "Failure",
+        "duration_ms": 90008,
+        "successful_harness_assertions": 0
+      },
+      {
+        "harness": "proofs::substitution_uses_first_match_once",
+        "status": "Success",
+        "duration_ms": 2136,
+        "successful_harness_assertions": 13
+      },
+      {
+        "harness": "proofs::constructor_accepts_exact_arity",
+        "status": "Failure",
+        "duration_ms": 90029,
+        "successful_harness_assertions": 0
+      },
+      {
+        "harness": "proofs::builtin_redeclaration_preserves_state",
+        "status": "Success",
+        "duration_ms": 8096,
+        "successful_harness_assertions": 2
+      },
+      {
+        "harness": "proofs::signature_sequence_is_transactional",
+        "status": "Failure",
+        "duration_ms": 90027,
+        "successful_harness_assertions": 0
+      },
+      {
+        "harness": "proofs::variable_roundtrip",
+        "status": "Success",
+        "duration_ms": 592,
+        "successful_harness_assertions": 4
+      }
+    ]
+  },
+  "finished_utc": "2026-09-27T10:04:19.901933+00:00",
+  "source_unchanged": true,
+  "passed": false,
+  "record_kind": "Historical run at tested commit; not certification of the enclosing evidence commit",
+  "evidence_archive": {
+    "path": "verification/baseline-2026-09-27.tar.gz",
+    "sha256": "25a78a1d208b32f2ee5cc3df957750f5472a74088aca54ee377a933d855f0f0e"
+  },
+  "shared_contract": {
+    "source_sha256": "b86bedc883f94e3a46518aa620f28d48c72b520871fb19c5bb9927c0fa90985d",
+    "cakeml_commit": "bef5e6194c41e356441399d4344b965794dc0d1b",
+    "shared_file_identity": true,
+    "hol4_build": "not run",
+    "rust_refinement": "not proved",
+    "semantics_authority": "Original HOL4 theories and their dependencies"
+  },
+  "qualification": {
+    "kani": {
+      "verifier": "kani",
+      "version": "Kani Rust Verifier 0.68.0 (standalone)\nCBMC 6.11.0\n",
+      "source_sha256": "b86bedc883f94e3a46518aa620f28d48c72b520871fb19c5bb9927c0fa90985d",
+      "kind": "installation qualification only; no Candle semantic claim",
+      "controls": [
+        {
+          "name": "upstream",
+          "expected_success": true,
+          "exit_code": 0,
+          "expectation_met": true,
+          "input_sha256": "d25d98f6d1cfe3b477fd2b392c45261476f4f434c503da2e81e57c07a6b5214d"
+        },
+        {
+          "name": "deliberate-failure",
+          "expected_success": false,
+          "exit_code": 1,
+          "expectation_met": true,
+          "input_sha256": "c358d05dba428c00f0327b067e6956ceb996ecd5a547f0915f0939752541d4a9"
+        }
+      ],
+      "passed": true,
+      "source_unchanged": true
+    },
+    "verus": {
+      "verifier": "verus",
+      "version": "Verus\n  Version: 0.2026.09.20.aef82ed\n  Profile: release\n  Platform: linux_x86_64\n  Toolchain: 1.98.1-x86_64-unknown-linux-gnu (overridden by environment variable RUSTUP_TOOLCHAIN)\n\n",
+      "source_sha256": "b86bedc883f94e3a46518aa620f28d48c72b520871fb19c5bb9927c0fa90985d",
+      "kind": "installation qualification only; no Candle semantic claim",
+      "controls": [
+        {
+          "name": "upstream",
+          "expected_success": true,
+          "exit_code": 0,
+          "expectation_met": true,
+          "input_sha256": "9085e7775c3b52823d3951c9702be796149d07e34fb306054a612526542ca8bf"
+        },
+        {
+          "name": "deliberate-failure",
+          "expected_success": false,
+          "exit_code": 1,
+          "expectation_met": true,
+          "input_sha256": "10a50e9a57f1de39bd9f4929d6959d9949a86e4e8801c60040e181a451e8dcdc"
+        }
+      ],
+      "passed": true,
+      "source_unchanged": true
+    }
+  },
+  "kani_failure_reason": "Three CBMC timeouts at the registered 90-second limit; see kani.log in archive"
+}
